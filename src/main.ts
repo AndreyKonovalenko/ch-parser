@@ -1,67 +1,25 @@
-import path from  'path';
-import fs from 'fs';
-import os from 'os'
-import { XMLParser } from 'fast-xml-parser';
+import { parseDate } from './service';
+import  { getData } from './xml-loader-from-files';
 import 'dotenv/config'
 
-function parseDate(date: string | number){
-  let dateString = date.toString()
-  dateString = dateString.length == 8 ? dateString : '0' + dateString
-  let day = dateString.substring(0, 2);
-  let month = dateString.substring(2, 4)
-  let year = dateString.substring(4, 8); 
-
-  day = day.length < 2 ? '0' + day: day;
-  month = month.length < 2 ? '0' + month : month;
-
-  return `${day}-${month}-${year}`
-}
-
-const pathname = process.env.DIRECTORY
-if (!pathname) {
+const jsonObj = getData();
+const loans = jsonObj.SINGLE_FORMAT.LOANS
+const loan_uuid = process.argv[2] .length === 38 ? process.argv[2]: null;
+if (!loan_uuid){
+  console.error('uuid задан не верно!!!')
+  console.log('npm run start -- 34 chars')
   process.exit(0)
 }
-// try {
-//   const filenames = fs.readdirSync(pathname)
-//   filenames.forEach(file=> {
-//     console.log(file)
-//   })
-// } catch(err) {
-//   console.error('error reading directory', err)
-// }
 
+const loan = loans.LOAN.find((loan: { UUID: string; }) => loan.UUID === loan_uuid)
 
-try {
-  // Read the XML file content synchronously
-  const filename = fs.readdirSync(pathname)
-  // console.log(filename)
-  // console.log(path.join(pathname, filename[0]))
-  const xmlData = fs.readFileSync(path.join(pathname, filename[0]), 'utf8');
+const arraers = loan.PASTDUE_ARREARS.PASTDUE_ARREAR
+let count = 0;
+const seen = new Set()
 
-  // Create a new XMLParser instance
-  const parser = new XMLParser();
+const table = []
 
-  // Parse the XML data
-  const jsonObj = parser.parse(xmlData);
-  const loans = jsonObj.SINGLE_FORMAT.LOANS
-  // console.log(loans)
-  const loan_uuid = process.argv[2] .length === 38 ? process.argv[2]: null;
-  console.log(process.argv, loan_uuid)
-  if (!loan_uuid){
-    console.error('uuid задан не верно!!!')
-    console.log('npm run start -- 34 chars')
-    process.exit(0)
-  }
-
-  const loan = loans.LOAN.find((loan: { UUID: string; }) => loan.UUID === loan_uuid)
-  console.log(loan)
-  const arraers = loan.PASTDUE_ARREARS.PASTDUE_ARREAR
-  let count = 0;
-  const seen = new Set()
-
-  const table = []
-
-  const result = []
+const result = []
   for (const index in arraers) {
     if (arraers[index].DAYS_PAST_DUE > 5 ) { 
         // console.log(arraers[index])
@@ -88,7 +46,3 @@ try {
   console.log(loan_uuid)
   console.table(table)
   console.log(process.argv[2])
-
-} catch (error) {
-  console.error('Error reading or parsing XML file:', error);
-}
