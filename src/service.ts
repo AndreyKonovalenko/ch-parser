@@ -24,7 +24,7 @@ export function pastdueArrearsHandler(arraers:Array<Arrear>, uuid: string) {
       if ( arrear && arrear > 0) { 
           table.push({
             'проп. платеж': parseDate(arraers[index].PAST_DUE_DATE), 
-            'дата оплаты': parseDate(arraers[index].CALCULATION_DATE),
+            'дата расчета': parseDate(arraers[index].CALCULATION_DATE),
             'cумма':arraers[index].PAST_DUE,
             'дней просрочки':arraers[index].DAYS_PAST_DUE
           })

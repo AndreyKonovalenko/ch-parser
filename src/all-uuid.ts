@@ -5,7 +5,7 @@ import 'dotenv/config'
 const jsonObj = getData();
 const loans = jsonObj.SINGLE_FORMAT.LOANS
 
-if( !loans){
+if(!loans){
   console.log('Просрочки отсутвуют')
   process.exit(0)
 }
