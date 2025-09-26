@@ -12,3 +12,7 @@ export interface Arrear {
   DAYS_PAST_DUE?: number;
   DAYS_PAST_DUE_REPAID?: number;
 }
+
+export interface IData {
+  [key: string]: number | string;
+}
