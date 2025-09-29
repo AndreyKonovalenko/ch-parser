@@ -19,7 +19,7 @@ export function parseDate(date: string | number | undefined) {
 export function pastdueArrearsHandler(arraers: Array<Arrear>, uuid: string) {
   const table = [];
   for (const index in arraers) {
-    const arrear = arraers[index].PAST_DUE;
+    // const arrear = arraers[index].PAST_DUE;
     table.push({
       'проп. платеж': parseDate(arraers[index].PAST_DUE_DATE),
       'дата расчета': parseDate(arraers[index].CALCULATION_DATE),
@@ -44,7 +44,7 @@ export function allPaymentDataHandler(
     table.push({
       payment_date: parseDate(payments[index].PAYMENT_DATE),
       calc_date: calc_date,
-      pastDueDate: pastDue ? pastDue.PAST_DUE_DATE : '',
+      pastDueDate: pastDue ? ( pastDue.PAST_DUE_DATE ? pastDue.DAYS_PAST_DUE: 'no date') : '',
       pastDue: pastDue ? pastDue.PAST_DUE : 0,
       pastDueDays: pastDue ? pastDue.DAYS_PAST_DUE : 0,
     });
