@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node src/single-uuid.ts",
-    "all": "ts-node src/all-uuid.ts",
+    "start": "ts-node src/main.ts UUID",
+    "all": "ts-node src/main.ts ALL",
     "lint": "npx eslint src",
     "format": "prettier . --check",
     "format-fix": "prettier . --write"

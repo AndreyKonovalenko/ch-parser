@@ -13,35 +13,91 @@ export function parseDate(date: string | number | undefined) {
   day = day.length < 2 ? '0' + day : day;
   month = month.length < 2 ? '0' + month : month;
 
-  return `${day}-${month}-${year}`;
+  // return `${day}-${month}-${year}`;
+  return(`${year}-${month}-${day}`)
 }
 
-export function pastdueArrearsHandler(arraers: Array<Arrear>, uuid: string) {
-  const table = [];
-  for (const index in arraers) {
-    // const arrear = arraers[index].PAST_DUE;
-    table.push({
-      'дата возн': parseDate(arraers[index].PAST_DUE_DATE),
-      'дата расчета': parseDate(arraers[index].CALCULATION_DATE),
-      'cумма': arraers[index].PAST_DUE,
-      'дней просрочки': arraers[index].DAYS_PAST_DUE,
-      'DPDR': arraers[index].DAYS_PAST_DUE_REPAID,
-      'PMPD': parseDate(arraers[index].PRINCIPAL_MISSED_PAYMENT_DATE),
-      'IMPD':parseDate(arraers[index].INTEREST_MISSED_PAYMENT_DATE),
-    });
+function getDaysBetweenDates(date1: string| undefined, date2:string| undefined) {
+
+  if (date1 == undefined || date2 == undefined){
+    return undefined
   }
+  const d1 = new Date(date1);
+  const d2 = new Date(date2);
+  const diffMs = Math.abs(d1.getTime() - d2.getTime()); // Use Math.abs for positive difference
+  const millisecondsPerDay = 1000 * 60 * 60 * 24;
+  return Math.floor(diffMs / millisecondsPerDay);
+
+}
+
+// function findDateSegment(arrears: Array<Arrear>){
+//   let startDate: Date | undefined = undefined;
+//   for (const index in arrears) {
+//     if (arrears[index].PAST_DUE > 0) {
+//       startDate = parseDate(arrears[index].PAST_DUE_DATE)
+//     }
+//   }
+// }
+
+function findSegmentOfArrear(arrears: Array<Arrear>, index: number) {
+// index of start date
+  const startDate = arrears[index].PAST_DUE_DATE;  
+  const segmet: Array<Arrear> = [];
+  arrears.forEach(element => {
+    if ( element.PAST_DUE_DATE === startDate ) {
+      segmet.push(element)
+    }
+  });
+
+  if (segmet.length > 1) {
+    const dates: Array<string> = []
+    segmet.forEach(element => {
+      dates.push(parseDate(element.CALCULATION_DATE)) 
+    })
+    console.log(dates)
+    const maxTimeStemp = Math.max(...dates.map(date => (new Date(date)).getTime()));  
+    const result =  new Date(maxTimeStemp)
+    return result.toLocaleDateString('en-CA')
+  }
+  return undefined;
+
+}
+
+export function pastdueArrearsHandler(arrears: Array<Arrear>, uuid: string) {
+  const table: Array<{[keys: string]: string | undefined | number}> = [];
+  arrears.forEach((elemet, index) => {
+    const pastDueDate = parseDate(elemet.PAST_DUE_DATE);
+    const calculationDate = parseDate(elemet.CALCULATION_DATE);
+    const pastDue = elemet.PAST_DUE;
+    const daysPastDueRepaid = parseDate(elemet.DAYS_PAST_DUE_REPAID);
+    const endDate = findSegmentOfArrear(arrears, index);
+    table.push({
+      'дата возн': pastDueDate,
+      'дата расчета': calculationDate,
+      'cумма': pastDue,
+      'дней просрочки': arrears[index].DAYS_PAST_DUE,
+      'DPDR': daysPastDueRepaid,
+      'PMPD': parseDate(elemet.PRINCIPAL_MISSED_PAYMENT_DATE),
+      'IMPD':parseDate(elemet.INTEREST_MISSED_PAYMENT_DATE),
+      'startDate': pastDueDate,
+      'endDate': findSegmentOfArrear(arrears, index), 
+      'diff': getDaysBetweenDates(pastDueDate, endDate),
+    });
+  })
   return { uuid, table };
 }
 
+
+
 export function allPaymentDataHandler(
-  arraers: Array<IData>,
+  arrears: Array<IData>,
   payments: Array<IData>,
   uuid: string,
 ) {
   const table = [];
   for (const index in payments) {
     const calc_date = parseDate(payments[index].CALCULATION_DATE);
-    const pastDue = arraers.find(
+    const pastDue = arrears.find(
       element => parseDate(element.CALCULATION_DATE) === calc_date,
     );
     table.push({
