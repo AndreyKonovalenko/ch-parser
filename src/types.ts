@@ -8,7 +8,7 @@ export interface Arrear {
   INTEREST_PAST_DUE?: number;
   OTHER_PAST_DUE?: number;
   INTEREST_MISSED_PAYMENT_DATE?: number;
-  PRINCIPAL_MISSED_PAYMEN_DATE?: number;
+  PRINCIPAL_MISSED_PAYMENT_DATE?: number;
   DAYS_PAST_DUE?: number;
   DAYS_PAST_DUE_REPAID?: number;
 }

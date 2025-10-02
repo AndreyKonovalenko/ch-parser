@@ -21,10 +21,13 @@ export function pastdueArrearsHandler(arraers: Array<Arrear>, uuid: string) {
   for (const index in arraers) {
     // const arrear = arraers[index].PAST_DUE;
     table.push({
-      'проп. платеж': parseDate(arraers[index].PAST_DUE_DATE),
+      'дата возн': parseDate(arraers[index].PAST_DUE_DATE),
       'дата расчета': parseDate(arraers[index].CALCULATION_DATE),
-      cумма: arraers[index].PAST_DUE,
+      'cумма': arraers[index].PAST_DUE,
       'дней просрочки': arraers[index].DAYS_PAST_DUE,
+      'DPDR': arraers[index].DAYS_PAST_DUE_REPAID,
+      'PMPD': parseDate(arraers[index].PRINCIPAL_MISSED_PAYMENT_DATE),
+      'IMPD':parseDate(arraers[index].INTEREST_MISSED_PAYMENT_DATE),
     });
   }
   return { uuid, table };
