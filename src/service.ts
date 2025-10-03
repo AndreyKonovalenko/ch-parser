@@ -54,7 +54,6 @@ function findSegmentOfArrear(arrears: Array<Arrear>, index: number) {
     segmet.forEach(element => {
       dates.push(parseDate(element.CALCULATION_DATE)) 
     })
-    console.log(dates)
     const maxTimeStemp = Math.max(...dates.map(date => (new Date(date)).getTime()));  
     const result =  new Date(maxTimeStemp)
     return result.toLocaleDateString('en-CA')
@@ -65,20 +64,21 @@ function findSegmentOfArrear(arrears: Array<Arrear>, index: number) {
 
 export function pastdueArrearsHandler(arrears: Array<Arrear>, uuid: string) {
   const table: Array<{[keys: string]: string | undefined | number}> = [];
-  arrears.forEach((elemet, index) => {
-    const pastDueDate = parseDate(elemet.PAST_DUE_DATE);
-    const calculationDate = parseDate(elemet.CALCULATION_DATE);
-    const pastDue = elemet.PAST_DUE;
-    const daysPastDueRepaid = parseDate(elemet.DAYS_PAST_DUE_REPAID);
+  arrears.forEach((element, index) => {
+    const pastDueDate = parseDate(element.PAST_DUE_DATE);
+    const calculationDate = parseDate(element.CALCULATION_DATE);
+    const pastDue = element.PAST_DUE;
+    const daysPastDueRepaid = parseDate(element.DAYS_PAST_DUE_REPAID);
     const endDate = findSegmentOfArrear(arrears, index);
+    const daysPastDue = element.DAYS_PAST_DUE
     table.push({
       'дата возн': pastDueDate,
       'дата расчета': calculationDate,
       'cумма': pastDue,
-      'дней просрочки': arrears[index].DAYS_PAST_DUE,
+      'дней просрочки': daysPastDue,
       'DPDR': daysPastDueRepaid,
-      'PMPD': parseDate(elemet.PRINCIPAL_MISSED_PAYMENT_DATE),
-      'IMPD':parseDate(elemet.INTEREST_MISSED_PAYMENT_DATE),
+      'PMPD': parseDate(element.PRINCIPAL_MISSED_PAYMENT_DATE),
+      'IMPD':parseDate(element.INTEREST_MISSED_PAYMENT_DATE),
       'startDate': pastDueDate,
       'endDate': findSegmentOfArrear(arrears, index), 
       'diff': getDaysBetweenDates(pastDueDate, endDate),
