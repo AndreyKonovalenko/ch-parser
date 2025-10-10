@@ -1,4 +1,4 @@
-import { Arrear, IData } from './types';
+import { Arrear} from './types';
 
 export function parseDate(date: string | number | undefined) {
   if (!date) {
@@ -14,21 +14,22 @@ export function parseDate(date: string | number | undefined) {
   month = month.length < 2 ? '0' + month : month;
 
   // return `${day}-${month}-${year}`;
-  return(`${year}-${month}-${day}`)
+  return `${year}-${month}-${day}`;
 }
 
-function getDaysBetweenDates(date1: string| undefined, date2:string| undefined) {
-
-  if (date1 == undefined || date2 == undefined){
-    return undefined
-  }
-  const d1 = new Date(date1);
-  const d2 = new Date(date2);
-  const diffMs = Math.abs(d1.getTime() - d2.getTime()); // Use Math.abs for positive difference
-  const millisecondsPerDay = 1000 * 60 * 60 * 24;
-  return Math.floor(diffMs / millisecondsPerDay);
-
-}
+// function getDaysBetweenDates(
+//   date1: string | undefined,
+//   date2: string | undefined,
+// ) {
+//   if (date1 == undefined || date2 == undefined) {
+//     return undefined;
+//   }
+//   const d1 = new Date(date1);
+//   const d2 = new Date(date2);
+//   const diffMs = Math.abs(d1.getTime() - d2.getTime()); // Use Math.abs for positive difference
+//   const millisecondsPerDay = 1000 * 60 * 60 * 24;
+//   return Math.floor(diffMs / millisecondsPerDay);
+// }
 
 // function findDateSegment(arrears: Array<Arrear>){
 //   let startDate: Date | undefined = undefined;
@@ -39,74 +40,74 @@ function getDaysBetweenDates(date1: string| undefined, date2:string| undefined) 
 //   }
 // }
 
-function findSegmentOfArrear(arrears: Array<Arrear>, index: number) {
-// index of start date
-  const startDate = arrears[index].PAST_DUE_DATE;  
-  const segmet: Array<Arrear> = [];
-  arrears.forEach(element => {
-    if ( element.PAST_DUE_DATE === startDate ) {
-      segmet.push(element)
+// function findSegmentOfArrear(arrears: Array<Arrear>, index: number) {
+//   // index of start date
+//   const startDate = arrears[index].PAST_DUE_DATE;
+//   const segmet: Array<Arrear> = [];
+//   arrears.forEach(element => {
+//     if (element.PAST_DUE_DATE === startDate) {
+//       segmet.push(element);
+//     }
+//   });
+
+//   if (segmet.length > 1) {
+//     const dates: Array<string> = [];
+//     segmet.forEach(element => {
+//       dates.push(parseDate(element.CALCULATION_DATE));
+//     });
+//     const maxTimeStemp = Math.max(
+//       ...dates.map(date => new Date(date).getTime()),
+//     );
+//     const result = new Date(maxTimeStemp);
+//     return result.toLocaleDateString('en-CA');
+//   }
+//   return undefined;
+// }
+
+function findDaysPasDueRepaid(arrears: Array<Arrear>, pastDueDate:string, calculationDate: string): undefined | string | number  {
+  const result =  arrears.find(element => {
+    if (
+      parseDate(element.PAST_DUE_DATE) === pastDueDate &&
+      parseDate(element.CALCULATION_DATE) > calculationDate &&
+      element.PAST_DUE === 0
+    ) {
+      return element
+    }
+  })
+  return result?.DAYS_PAST_DUE_REPAID
+    
+}
+
+export function pastdueArrearsHandler(arrears: Array<Arrear>) {
+  const table: Array<{ [keys: string]: string | undefined | number }> = [];
+  arrears.forEach((element) => {
+    const pastDue = element.PAST_DUE;
+    if (pastDue > 0) {
+      const pastDueDate = parseDate(element.PAST_DUE_DATE);
+      const calculationDate = parseDate(element.CALCULATION_DATE);
+      const daysPastDueRepaid = findDaysPasDueRepaid(
+        arrears,
+        pastDueDate,
+        calculationDate,
+      ) 
+      const daysPastDue = element.DAYS_PAST_DUE;
+      table.push({
+        'дата возникновения': pastDueDate,
+        'дата обновления ': calculationDate,
+        'cумма просрочки': pastDue,
+        'дн. на дату обнов.': daysPastDue,
+        'всего дней': daysPastDueRepaid,
+      });
     }
   });
-
-  if (segmet.length > 1) {
-    const dates: Array<string> = []
-    segmet.forEach(element => {
-      dates.push(parseDate(element.CALCULATION_DATE)) 
-    })
-    const maxTimeStemp = Math.max(...dates.map(date => (new Date(date)).getTime()));  
-    const result =  new Date(maxTimeStemp)
-    return result.toLocaleDateString('en-CA')
-  }
-  return undefined;
-
+  return table;
 }
 
-export function pastdueArrearsHandler(arrears: Array<Arrear>, uuid: string) {
-  const table: Array<{[keys: string]: string | undefined | number}> = [];
-  arrears.forEach((element, index) => {
-    const pastDueDate = parseDate(element.PAST_DUE_DATE);
-    const calculationDate = parseDate(element.CALCULATION_DATE);
-    const pastDue = element.PAST_DUE;
-    const daysPastDueRepaid = parseDate(element.DAYS_PAST_DUE_REPAID);
-    const endDate = findSegmentOfArrear(arrears, index);
-    const daysPastDue = element.DAYS_PAST_DUE
-    table.push({
-      'дата возн': pastDueDate,
-      'дата расчета': calculationDate,
-      'cумма': pastDue,
-      'дней просрочки': daysPastDue,
-      'DPDR': daysPastDueRepaid,
-      'PMPD': parseDate(element.PRINCIPAL_MISSED_PAYMENT_DATE),
-      'IMPD':parseDate(element.INTEREST_MISSED_PAYMENT_DATE),
-      'startDate': pastDueDate,
-      'endDate': findSegmentOfArrear(arrears, index), 
-      'diff': getDaysBetweenDates(pastDueDate, endDate),
-    });
-  })
-  return { uuid, table };
-}
-
-
-
-export function allPaymentDataHandler(
-  arrears: Array<IData>,
-  payments: Array<IData>,
-  uuid: string,
-) {
-  const table = [];
-  for (const index in payments) {
-    const calc_date = parseDate(payments[index].CALCULATION_DATE);
-    const pastDue = arrears.find(
-      element => parseDate(element.CALCULATION_DATE) === calc_date,
-    );
-    table.push({
-      payment_date: parseDate(payments[index].PAYMENT_DATE),
-      calc_date: calc_date,
-      pastDueDate: pastDue ? ( pastDue.PAST_DUE_DATE ? pastDue.DAYS_PAST_DUE: 'no date') : '',
-      pastDue: pastDue ? pastDue.PAST_DUE : 0,
-      pastDueDays: pastDue ? pastDue.DAYS_PAST_DUE : 0,
-    });
-  }
-  return { uuid, table };
-}
+// let
+//     Source = Json.Document(File.Contents("C:\Users\konovalenko.a\Desktop\test\1125250004285.json")),
+//     #"Converted to Table" = Table.FromList(Source, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+//     #"Added Custom" = Table.AddColumn(#"Converted to Table", "tb", each Table.FromRecords({[Column1]})),
+//     res=Table.Combine(#"Added Custom"[tb]),
+//     #"Переупорядоченные столбцы" = Table.ReorderColumns(res,{"UUID", "дата возникновения", "дата обновления ", "cумма просрочки", "дн. на дату обнов.", "всего дней"})
+// in
+//     #"Переупорядоченные столбцы"

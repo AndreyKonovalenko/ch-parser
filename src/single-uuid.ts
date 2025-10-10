@@ -3,7 +3,6 @@ import { pastdueArrearsHandler } from './service';
 import 'dotenv/config';
 
 const singleUUID = (): void => {
-
   const jsonObj = getData();
   const loans = jsonObj.SINGLE_FORMAT.LOANS;
 
@@ -25,9 +24,8 @@ const singleUUID = (): void => {
   // console.log(pastDueArraers[1], pastDue[1], arraers[1], payments[1])
 
   console.log('uuid: ', loan_uuid);
-  console.table(pastdueArrearsHandler(pastDueArraers, loan_uuid).table);
+  console.table(pastdueArrearsHandler(pastDueArraers));
   // console.table(allPaymentDataHandler(pastDueArraers, loan.PAYMENTS.PAYMENT, loan.uuid).table)
-
-}
+};
 
 export default singleUUID;

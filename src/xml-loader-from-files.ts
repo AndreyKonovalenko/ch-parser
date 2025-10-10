@@ -21,3 +21,18 @@ export function getData() {
     process.exit(0);
   }
 }
+
+export function saveToFile(name:string, content:string) {
+  const pathname = process.env.DIRECTORY;
+   if (!pathname) {
+    console.error('DIRECROTY is not dicleared in .env');
+    process.exit(0);
+  }
+  fs.writeFile(path.join(pathname, `${name}.json`), content, (err) => {
+  if (err) {
+    console.error('Error writing to file:', err);
+  } else {
+    console.log(`Content successfully saved to ${name}`);
+  }
+})
+}

@@ -15,6 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "@eslint/js": "^9.36.0",
+    "console-table-printer": "^2.14.6",
     "dotenv": "^17.2.2",
     "eslint": "^9.36.0",
     "eslint-config-prettier": "^10.1.8",
