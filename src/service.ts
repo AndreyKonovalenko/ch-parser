@@ -1,4 +1,4 @@
-import { Arrear} from './types';
+import { Arrear, LOAN_KEYS} from './types';
 
 export function parseDate(date: string | number | undefined) {
   if (!date) {
@@ -16,6 +16,7 @@ export function parseDate(date: string | number | undefined) {
   // return `${day}-${month}-${year}`;
   return `${year}-${month}-${day}`;
 }
+
 
 // function getDaysBetweenDates(
 //   date1: string | undefined,
@@ -92,22 +93,22 @@ export function pastdueArrearsHandler(arrears: Array<Arrear>) {
       ) 
       const daysPastDue = element.DAYS_PAST_DUE;
       table.push({
-        'дата возникновения': pastDueDate,
-        'дата обновления ': calculationDate,
-        'cумма просрочки': pastDue,
-        'дн. на дату обнов.': daysPastDue,
-        'всего дней': daysPastDueRepaid,
+        [LOAN_KEYS.PAST_DUE_DATE]: pastDueDate,
+        [LOAN_KEYS.CALCULATION_DATE]: calculationDate,
+        [LOAN_KEYS.PAST_DUE]: pastDue,
+        [LOAN_KEYS.DAYS_PAST_DUE]: daysPastDue,
+        [LOAN_KEYS.DAYS_PAST_DUE_REPAID]: daysPastDueRepaid,
       });
     }
   });
   return table;
 }
 
+
 // let
 //     Source = Json.Document(File.Contents("C:\Users\konovalenko.a\Desktop\test\1125250004285.json")),
 //     #"Converted to Table" = Table.FromList(Source, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
 //     #"Added Custom" = Table.AddColumn(#"Converted to Table", "tb", each Table.FromRecords({[Column1]})),
 //     res=Table.Combine(#"Added Custom"[tb]),
-//     #"Переупорядоченные столбцы" = Table.ReorderColumns(res,{"UUID", "дата возникновения", "дата обновления ", "cумма просрочки", "дн. на дату обнов.", "всего дней"})
 // in
-//     #"Переупорядоченные столбцы"
+//     res
