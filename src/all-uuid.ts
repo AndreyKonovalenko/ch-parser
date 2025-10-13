@@ -9,7 +9,7 @@ import {Table} from 'console-table-printer';
 const allUUID = () => {
   const jsonObj = getData();
   const loans = jsonObj.SINGLE_FORMAT.LOANS;
-  const ogrn = jsonObj.SINGLE_FORMAT.BUSINESSES.BUSINESS[0].OGRN
+
 
   if (!loans) {
     console.log('Просрочки отсутвуют');
@@ -84,7 +84,18 @@ const allUUID = () => {
   }
   resultTable.printTable()
   const jsonString = JSON.stringify(reslut);
-  saveToFile(ogrn, jsonString)
+  const ogrn = jsonObj. SINGLE_FORMAT.BUSINESSE ? jsonObj.SINGLE_FORMAT.BUSINESSES.BUSINESS[0].OGRN : undefined;
+  const name = jsonObj.SINGLE_FORMAT.NAMES? jsonObj.SINGLE_FORMAT.NAMES.NAME.LAST_NAME: undefined;
+  
+  if (ogrn){
+   saveToFile(ogrn, jsonString)
+  }
+  if (name){
+    saveToFile(name, jsonString)
+  }
+  if(!ogrn&&!name){
+    saveToFile("output", jsonObj)
+  }
 
 };
 
