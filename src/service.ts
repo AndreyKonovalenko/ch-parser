@@ -1,4 +1,4 @@
-import { Arrear, LOAN_KEYS} from './types';
+import { Arrear, LOAN_KEYS } from './types';
 
 export function parseDate(date: string | number | undefined) {
   if (!date) {
@@ -16,7 +16,6 @@ export function parseDate(date: string | number | undefined) {
   // return `${day}-${month}-${year}`;
   return `${year}-${month}-${day}`;
 }
-
 
 // function getDaysBetweenDates(
 //   date1: string | undefined,
@@ -65,23 +64,26 @@ export function parseDate(date: string | number | undefined) {
 //   return undefined;
 // }
 
-function findDaysPasDueRepaid(arrears: Array<Arrear>, pastDueDate:string, calculationDate: string): undefined | string | number  {
-  const result =  arrears.find(element => {
+function findDaysPasDueRepaid(
+  arrears: Array<Arrear>,
+  pastDueDate: string,
+  calculationDate: string,
+): undefined | string | number {
+  const result = arrears.find(element => {
     if (
       parseDate(element.PAST_DUE_DATE) === pastDueDate &&
       parseDate(element.CALCULATION_DATE) > calculationDate &&
       element.PAST_DUE === 0
     ) {
-      return element
+      return element;
     }
-  })
-  return result?.DAYS_PAST_DUE_REPAID
-    
+  });
+  return result?.DAYS_PAST_DUE_REPAID;
 }
 
 export function pastdueArrearsHandler(arrears: Array<Arrear>) {
   const table: Array<{ [keys: string]: string | undefined | number }> = [];
-  arrears.forEach((element) => {
+  arrears.forEach(element => {
     const pastDue = element.PAST_DUE;
     if (pastDue > 0) {
       const pastDueDate = parseDate(element.PAST_DUE_DATE);
@@ -90,7 +92,7 @@ export function pastdueArrearsHandler(arrears: Array<Arrear>) {
         arrears,
         pastDueDate,
         calculationDate,
-      ) 
+      );
       const daysPastDue = element.DAYS_PAST_DUE;
       table.push({
         [LOAN_KEYS.PAST_DUE_DATE]: pastDueDate,
@@ -103,7 +105,6 @@ export function pastdueArrearsHandler(arrears: Array<Arrear>) {
   });
   return table;
 }
-
 
 // let
 //     Source = Json.Document(File.Contents("C:\Users\konovalenko.a\Desktop\test\1125250004285.json")),

@@ -5,6 +5,13 @@ import 'dotenv/config';
 if (process.argv[2] === 'UUID') {
   singleUUID();
 }
+
 if (process.argv[2] === 'ALL') {
-  allUUID();
+  const withJson = false;
+  allUUID(withJson);
+}
+
+if (process.argv[2] === 'ALL-JSON') {
+  const withJson = true;
+  allUUID(withJson);
 }

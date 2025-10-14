@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node src/main.ts UUID",
     "all": "ts-node src/main.ts ALL",
+    "all-json": "ts-node src/main.ts ALL-JSON",
     "lint": "npx eslint src",
     "format": "prettier . --check",
     "format-fix": "prettier . --write"
