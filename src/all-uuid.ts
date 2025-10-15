@@ -116,7 +116,7 @@ const allUUID = (withJson: boolean) => {
   resultTable.printTable();
   const jsonString = JSON.stringify(reslut);
   const ogrn = jsonObj.SINGLE_FORMAT.BUSINESSES
-    ? jsonObj.SINGLE_FORMAT.BUSINESSES.BUSINESS[0].OGRN
+    ? jsonObj.SINGLE_FORMAT.BUSINESSES.BUSINESS.OGRN
     : undefined;
   const name = jsonObj.SINGLE_FORMAT.NAMES
     ? jsonObj.SINGLE_FORMAT.NAMES.NAME.LAST_NAME
