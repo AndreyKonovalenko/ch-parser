@@ -10,18 +10,18 @@ export function getFiles() {
   }
   try {
     const files = fs.readdirSync(pathname);
-    const result: Array<string> = []
+    const result: Array<string> = [];
     // 'files' is an array of filenames and directory names within the specified path
-     files.forEach(element => {
-      if (path.extname(element) === ".xml") { 
-       result.push(path.join(pathname, element))
+    files.forEach(element => {
+      if (path.extname(element) === '.xml') {
+        result.push(path.join(pathname, element));
       }
-     })
-    return result
+    });
+    return result;
   } catch (err) {
     console.error('Error reading directory:', err);
   }
-} 
+}
 
 export function getData(pathToFile: string) {
   try {
