@@ -2,16 +2,30 @@ import path from 'path';
 import fs from 'fs';
 import { XMLParser } from 'fast-xml-parser';
 
-export function getData() {
+export function getFiles() {
   const pathname = process.env.DIRECTORY;
   if (!pathname) {
     console.error('DIRECROTY is not dicleared in .env');
     process.exit(0);
   }
   try {
-    // Read the XML file content synchronously
-    const filename = fs.readdirSync(pathname);
-    const xmlData = fs.readFileSync(path.join(pathname, filename[0]), 'utf8');
+    const files = fs.readdirSync(pathname);
+    const result: Array<string> = []
+    // 'files' is an array of filenames and directory names within the specified path
+     files.forEach(element => {
+      if (path.extname(element) === ".xml") { 
+       result.push(path.join(pathname, element))
+      }
+     })
+    return result
+  } catch (err) {
+    console.error('Error reading directory:', err);
+  }
+} 
+
+export function getData(pathToFile: string) {
+  try {
+    const xmlData = fs.readFileSync(pathToFile, 'utf8');
     const parser = new XMLParser();
     // Parse the XML data
     const jsonObj = parser.parse(xmlData);

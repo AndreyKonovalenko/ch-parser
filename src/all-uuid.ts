@@ -12,8 +12,8 @@ import { parseDate } from './service';
 import 'dotenv/config';
 import { Table } from 'console-table-printer';
 
-const allUUID = (withJson: boolean) => {
-  const jsonObj = getData();
+const allUUID = (withJson: boolean, pathToFile: string) => {
+  const jsonObj = getData(pathToFile);
   const loans = jsonObj.SINGLE_FORMAT.LOANS;
 
   if (!loans) {
