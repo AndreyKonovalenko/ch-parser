@@ -107,13 +107,18 @@ export function pastdueArrearsHandler(arrears: Array<Arrear>) {
 }
 
 export function getOGRN(data: {
-  [key: string]: { [key: string]: Array<{ [key: string]: string }> };
+  [key: string]: { [key: string]: Array<{ [key: string]: string }> | { [key: string]: string }};
 }) {
   if (data.BUSINESSES) {
-    return data.BUSINESSES.BUSINESS.find(
-      (element: { [key: string]: string | number }) =>
-        element.OGRN !== undefined,
-    );
+    if (Array.isArray(data.BUSINESSES.BUSINESS)) {
+      return (data.BUSINESSES.BUSINESS).find(
+        (element: { [key: string]: string | number }) =>
+          element.OGRN !== undefined,
+      );
+    }
+     if (!Array.isArray(data.BUSINESSES.BUSINESS)) {
+      return data.BUSINESSES.BUSINESS
+    }
   }
   return undefined;
 }
@@ -124,7 +129,7 @@ export function getPersonName(
 }
 
 export function removeOOO(data: string) {
-  return data.split('"')[1];
+  return data.split(/['"]/)[1];
 }
 
 // let
