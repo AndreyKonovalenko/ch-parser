@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node src/main.ts UUID",
+    "overview": "ts-node src/main.ts OVERVIEW",
+    "overview-json": "ts-node src/main.ts OVERVIEW-JSON",
     "all": "ts-node src/main.ts ALL",
     "all-json": "ts-node src/main.ts ALL-JSON",
     "lint": "npx eslint src",

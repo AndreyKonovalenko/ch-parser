@@ -106,6 +106,27 @@ export function pastdueArrearsHandler(arrears: Array<Arrear>) {
   return table;
 }
 
+export function getOGRN(data: {
+  [key: string]: { [key: string]: Array<{ [key: string]: string }> };
+}) {
+  if (data.BUSINESSES) {
+    return data.BUSINESSES.BUSINESS.find(
+      (element: { [key: string]: string | number }) =>
+        element.OGRN !== undefined,
+    );
+  }
+  return undefined;
+}
+export function getPersonName(
+  data: Record<string, Record<string, { [key: string]: string }>>,
+) {
+  return data.NAMES ? data.NAMES.NAME.LAST_NAME : undefined;
+}
+
+export function removeOOO(data: string) {
+  return data.split('"')[1];
+}
+
 // let
 //     Source = Json.Document(File.Contents("C:\Users\konovalenko.a\Desktop\test\1125250004285.json")),
 //     #"Converted to Table" = Table.FromList(Source, Splitter.SplitByNothing(), null, null, ExtraValues.Error),

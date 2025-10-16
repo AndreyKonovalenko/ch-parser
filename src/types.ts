@@ -137,3 +137,14 @@ export const LOAN_KEYS = {
   UUID: 'uuid',
   LOAN_RELATIONSHIP: 'отношение',
 };
+
+export const LOANS_OVERVIEW = {
+  LOANS_ACTIVE: 'всего активных д.',
+  LOANS_MAIN_BORROWER: 'основной заемщик',
+  TTL_DELQ_5: 'до 5 дн',
+  TTL_DELQ_5_29: 'от 5 до 29',
+  TTL_DELQ_30_59: 'от 30 до 59',
+  TTL_DELQ_60_89: 'от 60 до 89',
+  TTL_DELQ_90_PLUS: '90 +',
+  PAY_LOAD: 'платежная нагрузка',
+};

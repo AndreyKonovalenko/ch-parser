@@ -1,5 +1,10 @@
 import { getData } from './xml-loader-from-files';
-import { pastdueArrearsHandler } from './service';
+import {
+  pastdueArrearsHandler,
+  getOGRN,
+  getPersonName,
+  removeOOO,
+} from './service';
 import { saveToFile } from './xml-loader-from-files';
 import {
   LOAN_KEYS,
@@ -15,13 +20,21 @@ import { Table } from 'console-table-printer';
 const allUUID = (withJson: boolean, pathToFile: string) => {
   const jsonObj = getData(pathToFile);
   const loans = jsonObj.SINGLE_FORMAT.LOANS;
+  const ogrn = getOGRN(jsonObj.SINGLE_FORMAT);
+  const name = getPersonName(jsonObj.SINGLE_FORMAT);
 
   if (!loans) {
     console.log('Просрочки отсутвуют');
     process.exit(0);
   }
 
-  const resultTable = new Table();
+  const resultTable = new Table({
+    title: ogrn
+      ? `${removeOOO(ogrn.SHORT_NAME)} OGRN:${ogrn.OGRN} `
+      : name
+        ? name
+        : 'не указано',
+  });
 
   const reslut: Array<{ [key: string]: number | string | undefined }> = [];
 
@@ -115,22 +128,13 @@ const allUUID = (withJson: boolean, pathToFile: string) => {
   }
   resultTable.printTable();
   const jsonString = JSON.stringify(reslut);
-  const ogrn = jsonObj.SINGLE_FORMAT.BUSINESSES
-    ? jsonObj.SINGLE_FORMAT.BUSINESSES.BUSINESS.OGRN
-    : undefined;
-  const name = jsonObj.SINGLE_FORMAT.NAMES
-    ? jsonObj.SINGLE_FORMAT.NAMES.NAME.LAST_NAME
-    : undefined;
 
   if (withJson) {
     if (ogrn) {
-      saveToFile(ogrn, jsonString);
+      saveToFile(ogrn.OGRN, jsonString);
     }
     if (name) {
       saveToFile(name, jsonString);
-    }
-    if (!ogrn && !name) {
-      saveToFile('output', jsonString);
     }
   }
 };
