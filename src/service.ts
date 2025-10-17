@@ -113,7 +113,7 @@ export function getOGRN(data: {
     if (Array.isArray(data.BUSINESSES.BUSINESS)) {
       return (data.BUSINESSES.BUSINESS).find(
         (element: { [key: string]: string | number }) =>
-          element.OGRN !== undefined,
+          element.OGRN  !== undefined && element.SIGN_REORG === 0,
       );
     }
      if (!Array.isArray(data.BUSINESSES.BUSINESS)) {
