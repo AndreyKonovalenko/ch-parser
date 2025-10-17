@@ -125,7 +125,19 @@ export function getOGRN(data: {
 export function getPersonName(
   data: Record<string, Record<string, { [key: string]: string }>>,
 ) {
-  return data.NAMES ? data.NAMES.NAME.LAST_NAME : undefined;
+  if (data.NAMES) {
+    if (Array.isArray(data.NAMES.NAME)) {
+      const nameArr =  (data.NAMES.NAME).find(
+        (element: { [key: string]: string | number }) =>
+          element.LAST_NAME !== undefined,
+      );
+      return nameArr.LAST_NAME
+    }
+     if (!Array.isArray(data.NAMES.NAME)) {
+      return data.NAMES ? data.NAMES.NAME.LAST_NAME : undefined;
+    }
+  }
+  return undefined
 }
 
 export function removeOOO(data: string) {
