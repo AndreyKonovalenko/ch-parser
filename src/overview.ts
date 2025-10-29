@@ -6,7 +6,7 @@ import 'dotenv/config';
 const overview = (pathToFile: string) => {
   const jsonObj = getData(pathToFile);
   const loans = jsonObj.SINGLE_FORMAT.LOANS;
-  const ogrn = getOGRN(jsonObj.SINGLE_FORMAT);
+  const business = getOGRN(jsonObj.SINGLE_FORMAT);
   const name = getPersonName(jsonObj.SINGLE_FORMAT);
   const loansOverveiew = jsonObj.SINGLE_FORMAT.LOANS_OVERVIEW;
 
@@ -23,12 +23,12 @@ const overview = (pathToFile: string) => {
   };
 
   const data = {
-    ['наименование']: ogrn
-      ? removeOOO(ogrn.SHORT_NAME)
+    ['наименование']: business
+      ? removeOOO(business.SHORT_NAME)
       : name
         ? name
         : 'не указано',
-    ['ОГРН']: ogrn ? ogrn.OGRN : undefined,
+    ['ОГРН']: business ? business.OGRN : undefined,
     [LOANS_OVERVIEW.LOANS_ACTIVE]: loansOverveiew.LOANS_ACTIVE,
     [LOANS_OVERVIEW.PAY_LOAD]: loansOverveiew.PAY_LOAD,
     [LOAN_KEYS.DELQ_BALANCE]: loans ? hasCurrentPASTDUE(loans.LOAN) : 'нет ки',

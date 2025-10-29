@@ -141,6 +141,7 @@ export function getPersonName(
 }
 
 export function removeOOO(data: string) {
+  console.log(data.split(/['"]/))
   return data.split(/['"]/)[1];
 }
 

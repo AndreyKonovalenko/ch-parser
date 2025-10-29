@@ -20,7 +20,7 @@ import { Table } from 'console-table-printer';
 const allUUID = (withJson: boolean, pathToFile: string) => {
   const jsonObj = getData(pathToFile);
   const loans = jsonObj.SINGLE_FORMAT.LOANS;
-  const ogrn = getOGRN(jsonObj.SINGLE_FORMAT);
+  const business = getOGRN(jsonObj.SINGLE_FORMAT);
   const name = getPersonName(jsonObj.SINGLE_FORMAT);
 
   if (!loans) {
@@ -29,8 +29,8 @@ const allUUID = (withJson: boolean, pathToFile: string) => {
   }
 
   const resultTable = new Table({
-    title: ogrn
-      ? `${removeOOO(ogrn.SHORT_NAME)} OGRN:${ogrn.OGRN} `
+    title: business
+      ? `${removeOOO(business.SHORT_NAME)} OGRN:${business.OGRN} `
       : name
         ? name
         : 'не указано',
@@ -130,8 +130,8 @@ const allUUID = (withJson: boolean, pathToFile: string) => {
   const jsonString = JSON.stringify(reslut);
 
   if (withJson) {
-    if (ogrn) {
-      saveToFile(ogrn.OGRN ? ogrn.OGRN: removeOOO(ogrn.SHORT_NAME), jsonString);
+    if (business) {
+      saveToFile(business.OGRN ? business.OGRN: removeOOO(business.SHORT_NAME), jsonString);
     }
     if (name) {
       saveToFile(name, jsonString);
