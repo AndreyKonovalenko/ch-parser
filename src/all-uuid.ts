@@ -131,7 +131,10 @@ const allUUID = (withJson: boolean, pathToFile: string) => {
 
   if (withJson) {
     if (business) {
-      saveToFile(business.OGRN ? business.OGRN: removeOOO(business.SHORT_NAME), jsonString);
+      saveToFile(
+        business.OGRN ? business.OGRN : removeOOO(business.SHORT_NAME),
+        jsonString,
+      );
     }
     if (name) {
       saveToFile(name, jsonString);

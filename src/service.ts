@@ -107,17 +107,19 @@ export function pastdueArrearsHandler(arrears: Array<Arrear>) {
 }
 
 export function getOGRN(data: {
-  [key: string]: { [key: string]: Array<{ [key: string]: string }> | { [key: string]: string }};
+  [key: string]: {
+    [key: string]: Array<{ [key: string]: string }> | { [key: string]: string };
+  };
 }) {
   if (data.BUSINESSES) {
     if (Array.isArray(data.BUSINESSES.BUSINESS)) {
-      return (data.BUSINESSES.BUSINESS).find(
+      return data.BUSINESSES.BUSINESS.find(
         (element: { [key: string]: string | number }) =>
-          element.OGRN  !== undefined && element.SIGN_REORG === 0,
+          element.OGRN !== undefined && element.SIGN_REORG === 0,
       );
     }
-     if (!Array.isArray(data.BUSINESSES.BUSINESS)) {
-      return data.BUSINESSES.BUSINESS
+    if (!Array.isArray(data.BUSINESSES.BUSINESS)) {
+      return data.BUSINESSES.BUSINESS;
     }
   }
   return undefined;
@@ -127,21 +129,20 @@ export function getPersonName(
 ) {
   if (data.NAMES) {
     if (Array.isArray(data.NAMES.NAME)) {
-      const nameArr =  (data.NAMES.NAME).find(
+      const nameArr = data.NAMES.NAME.find(
         (element: { [key: string]: string | number }) =>
           element.LAST_NAME !== undefined,
       );
-      return nameArr.LAST_NAME
+      return nameArr.LAST_NAME;
     }
-     if (!Array.isArray(data.NAMES.NAME)) {
+    if (!Array.isArray(data.NAMES.NAME)) {
       return data.NAMES ? data.NAMES.NAME.LAST_NAME : undefined;
     }
   }
-  return undefined
+  return undefined;
 }
 
 export function removeOOO(data: string) {
-  console.log(data.split(/['"]/))
   return data.split(/['"]/)[1];
 }
 
