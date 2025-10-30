@@ -105,7 +105,7 @@ const sentence = (pathToFile: string) => {
             : '';
         const ttl_90_plus =
           loan.TTL_DELQ_90_PLUS > 0
-            ? `${[LOANS_OVERVIEW.TTL_DELQ_90_PLUS]}: ${loan.TTL_DELQ_90_PLUS}`
+            ? `${[LOANS_OVERVIEW.TTL_DELQ_90_PLUS]}: ${loan.TTL_DELQ_90_PLUS} `
             : '';
         const delq =
           ttl_5 +
