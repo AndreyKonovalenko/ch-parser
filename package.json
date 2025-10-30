@@ -9,6 +9,7 @@
     "overview-json": "ts-node src/main.ts OVERVIEW-JSON",
     "all": "ts-node src/main.ts ALL",
     "all-json": "ts-node src/main.ts ALL-JSON",
+    "sentence": "ts-node src/main.ts SENTENCE",
     "lint": "npx eslint src",
     "format": "prettier . --check",
     "format-fix": "prettier . --write"
