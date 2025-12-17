@@ -17,8 +17,8 @@ const overview = (pathToFile: string) => {
     }
   }
 
-  const hasCurrentPASTDUE = (loans: Array<{ [key: string]: number }>) => {
-    const pastdudedLoan = loans.find(element => element.DELQ_BALANCE > 0);
+  const hasCurrentPASTDUE = (loans: Array<{ [key: string]: number }> | {[key: string]: number } )=> {
+    const pastdudedLoan = Array.isArray(loans) ?  loans.find(element => element.DELQ_BALANCE > 0): loans.DELQ_BALANCE > 0;
     return pastdudedLoan ? 'да' : 'нет';
   };
 
