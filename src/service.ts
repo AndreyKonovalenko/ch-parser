@@ -81,28 +81,52 @@ function findDaysPasDueRepaid(
   return result?.DAYS_PAST_DUE_REPAID;
 }
 
-export function pastdueArrearsHandler(arrears: Array<Arrear>) {
+export function pastdueArrearsHandler(arrears: Arrear | Array<Arrear>) {
   const table: Array<{ [keys: string]: string | undefined | number }> = [];
-  arrears.forEach(element => {
-    const pastDue = element.PAST_DUE;
-    if (pastDue > 0) {
-      const pastDueDate = parseDate(element.PAST_DUE_DATE);
-      const calculationDate = parseDate(element.CALCULATION_DATE);
-      const daysPastDueRepaid = findDaysPasDueRepaid(
-        arrears,
-        pastDueDate,
-        calculationDate,
-      );
-      const daysPastDue = element.DAYS_PAST_DUE;
-      table.push({
-        [LOAN_KEYS.PAST_DUE_DATE]: pastDueDate,
-        [LOAN_KEYS.CALCULATION_DATE]: calculationDate,
-        [LOAN_KEYS.PAST_DUE]: pastDue,
-        [LOAN_KEYS.DAYS_PAST_DUE]: daysPastDue,
-        [LOAN_KEYS.DAYS_PAST_DUE_REPAID]: daysPastDueRepaid,
-      });
-    }
-  });
+
+  if(Array.isArray(arrears)) {
+    arrears.forEach(element => {
+      const pastDue = element.PAST_DUE;
+      if (pastDue > 0) {
+        const pastDueDate = parseDate(element.PAST_DUE_DATE);
+        const calculationDate = parseDate(element.CALCULATION_DATE);
+        const daysPastDueRepaid = findDaysPasDueRepaid(
+          arrears,
+          pastDueDate,
+          calculationDate,
+        );
+        const daysPastDue = element.DAYS_PAST_DUE;
+        table.push({
+          [LOAN_KEYS.PAST_DUE_DATE]: pastDueDate,
+          [LOAN_KEYS.CALCULATION_DATE]: calculationDate,
+          [LOAN_KEYS.PAST_DUE]: pastDue,
+          [LOAN_KEYS.DAYS_PAST_DUE]: daysPastDue,
+          [LOAN_KEYS.DAYS_PAST_DUE_REPAID]: daysPastDueRepaid,
+        });
+      }
+    });
+  }
+
+  if(!Array.isArray(arrears)) {
+      const pastDue = arrears.PAST_DUE;
+      if (pastDue > 0) {
+        const pastDueDate = parseDate(arrears.PAST_DUE_DATE);
+        const calculationDate = parseDate(arrears.CALCULATION_DATE);
+        // const daysPastDueRepaid = findDaysPasDueRepaid(
+        //   arrears,
+        //   pastDueDate,
+        //   calculationDate,
+        // );
+        const daysPastDue = arrears.DAYS_PAST_DUE;
+        table.push({
+          [LOAN_KEYS.PAST_DUE_DATE]: pastDueDate,
+          [LOAN_KEYS.CALCULATION_DATE]: calculationDate,
+          [LOAN_KEYS.PAST_DUE]: pastDue,
+          [LOAN_KEYS.DAYS_PAST_DUE]: daysPastDue,
+          // [LOAN_KEYS.DAYS_PAST_DUE_REPAID]: daysPastDueRepaid,
+        });
+      }
+  }
   return table;
 }
 
@@ -115,7 +139,7 @@ export function getOGRN(data: {
     if (Array.isArray(data.BUSINESSES.BUSINESS)) {
       return data.BUSINESSES.BUSINESS.find(
         (element: { [key: string]: string | number }) =>
-          element.OGRN !== undefined && element.SIGN_REORG === 0,
+          element.OGRN !== undefined
       );
     }
     if (!Array.isArray(data.BUSINESSES.BUSINESS)) {

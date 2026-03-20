@@ -40,13 +40,13 @@ const allUUID = (withJson: boolean, pathToFile: string) => {
 
   for (const index in loans.LOAN) {
     const loan = loans.LOAN[index];
-    const arraers = loan.PASTDUE_ARREARS
+    const arrears = loan.PASTDUE_ARREARS
       ? loan.PASTDUE_ARREARS.PASTDUE_ARREAR
         ? loan.PASTDUE_ARREARS.PASTDUE_ARREAR
         : null
       : null;
-    if (arraers && arraers.length > 0) {
-      const data = pastdueArrearsHandler(arraers);
+    if (arrears) {
+      const data = pastdueArrearsHandler(arrears);
       if (data.length > 0) {
         const relationship: keyof typeof RELATIONSHIP = loan.RELATIONSHIP;
         const status: keyof typeof STATUS = loan.STATUS;
