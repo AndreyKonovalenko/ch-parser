@@ -170,6 +170,87 @@ export function removeOOO(data: string) {
   return data.split(/['"]/)[1];
 }
 
+
+
+
+export type BusinessInput = {
+  SHORT_NAME: string;
+  OGRN: string;
+} | null | undefined;
+
+type NameInput = string | null | undefined;
+
+type BusinessInfoResult = {
+  name: string;
+  ogrn: string;
+};
+
+
+export function isValidName(name: NameInput) {
+  return name 
+    && typeof name === 'string' 
+    && name.trim().length > 0;
+}
+
+
+export function getBusinessInfo(business: BusinessInput, name: NameInput): BusinessInfoResult {
+
+  const  hasValidBusiness = business
+    && typeof business === 'object'
+    && business?.SHORT_NAME
+    && business?.OGRN
+  // Type validation
+
+  if (hasValidBusiness) {
+    return {
+      name: removeOOO(business.SHORT_NAME),
+      ogrn: business.OGRN
+    };
+  }
+
+  return { name: name || 'не указано', ogrn: 'не указано' };
+
+}
+
+
+
+// Helper to extract from array or object
+function extract<T>(node: unknown, key: string): T | undefined {
+  if (!node) return undefined;
+  const target = Array.isArray(node) ? node.find((item: any) => item?.[key] !== undefined) : node;
+  return target?.[key];
+}
+
+export function getOGRN(data: any): string | undefined {
+  return extract(data?.BUSINESSES?.BUSINESS, 'OGRN');
+}
+
+export function getPersonName(data: any): string | undefined {
+  const nameNode = data?.NAMES?.NAME;
+  const lastName = extract(nameNode, 'LAST_NAME');
+  return typeof lastName === 'string' ? lastName : undefined;
+}
+
+export function getShortName(data: any): string | undefined {
+  const business = data?.BUSINESSES?.BUSINESS;
+  if (!business) return undefined;
+  
+  const target = Array.isArray(business) 
+    ? business.find((item: any) => item?.SHORT_NAME !== undefined)
+    : business;
+  
+  const shortName = target?.SHORT_NAME;
+  if (!shortName) return undefined;
+  
+  if (typeof shortName === 'string') return shortName;
+  if (shortName?.value) return shortName.value;
+  if (Array.isArray(shortName)) return shortName[0]?.value || shortName[0];
+  
+  return undefined;
+}
+
+
+
 // let
 //     Source = Json.Document(File.Contents("C:\Users\konovalenko.a\Desktop\test\1125250004285.json")),
 //     #"Converted to Table" = Table.FromList(Source, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
