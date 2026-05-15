@@ -16,17 +16,14 @@ import {
 import { parseDate } from './service';
 import 'dotenv/config';
 import { Table } from 'console-table-printer';
+import { getBusinessInfo, BusinessInput } from './service';
 
 const allUUID = (withJson: boolean, pathToFile: string) => {
   const jsonObj = getData(pathToFile);
   const loans = jsonObj.SINGLE_FORMAT.LOANS;
-  const business = getOGRN(jsonObj.SINGLE_FORMAT);
+  const business: BusinessInput = getOGRN(jsonObj.SINGLE_FORMAT);
   const name = getPersonName(jsonObj.SINGLE_FORMAT);
 
-  if (!loans) {
-    console.log('Просрочки отсутвуют');
-    process.exit(0);
-  }
 
   const resultTable = new Table({
     title: business
@@ -36,7 +33,7 @@ const allUUID = (withJson: boolean, pathToFile: string) => {
         : 'не указано',
   });
 
-  const reslut: Array<{ [key: string]: number | string | undefined }> = [];
+  const reslut: Array<{ [key: string]: number | string | undefined }> = [] ;
 
   for (const index in loans.LOAN) {
     const loan = loans.LOAN[index];
@@ -127,7 +124,7 @@ const allUUID = (withJson: boolean, pathToFile: string) => {
     }
   }
   resultTable.printTable();
-  const jsonString = JSON.stringify(reslut);
+  const jsonString = JSON.stringify({leagalEntity: getBusinessInfo(business, name), arreas:reslut});
 
   if (withJson) {
     if (business) {
