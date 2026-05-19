@@ -17,6 +17,51 @@ export function parseDate(date: string | number | undefined) {
   return `${year}-${month}-${day}`;
 }
 
+export interface IBusiness {
+  /** Primary State Registration Number (optional) */
+  OGRN?: string;
+  /** Full legal name (required based on samples) */
+  FULL_NAME: string;
+  /** Shortened name (optional, but present in all given examples) */
+  SHORT_NAME?: string;
+  /** Previous name if the entity was renamed (optional) */
+  PREVIOUS_NAME?: string;
+  /** List of information source codes (e.g., "NBCH", "ECS", "EI") */
+  INFO_SOURCES?: string[];
+  /** Alternative name(s) (optional) */
+  OTHER_NAME?: string;
+  /** Some kind of sign flag (optional, appears as "1") */
+  SIGN_NAME?: string;
+  /** Reorganization flag (optional, "0" or "1") */
+  SIGN_REORG?: string;
+  /** Date of business history event, format `DDMMYYYY` (optional) */
+  BUSINESS_HISTORY_DATE?: string;
+}
+
+export interface IBusinesses {
+  BUSINESSES: {
+    BUSINESS: IBusiness[];
+  };
+}
+interface IRoot {
+  SINGLE_FORMAT: IBusinesses }
+
+
+export function getBusinessInfo(data: IRoot) {
+   const businesses: IBusiness[] | undefined = Array.isArray(data.SINGLE_FORMAT.BUSINESSES.BUSINESS) 
+  ? data.SINGLE_FORMAT.BUSINESSES.BUSINESS
+  : [data.SINGLE_FORMAT.BUSINESSES.BUSINESS]
+  if (businesses) { 
+    const company_name = businesses ? businesses[0].SHORT_NAME: undefined;
+    const company_name_short = company_name? removeOOO(company_name): 'имя не задано'
+    const ogrn = businesses ? businesses[0].OGRN: 'ОГРН не задано'
+    return {company_name_short, ogrn}
+  } 
+  return undefined
+} 
+ 
+
+
 // function getDaysBetweenDates(
 //   date1: string | undefined,
 //   date2: string | undefined,
@@ -130,24 +175,38 @@ export function pastdueArrearsHandler(arrears: Arrear | Array<Arrear>) {
   return table;
 }
 
-export function getOGRN(data: {
-  [key: string]: {
-    [key: string]: Array<{ [key: string]: string }> | { [key: string]: string };
-  };
-}) {
-  if (data.BUSINESSES) {
-    if (Array.isArray(data.BUSINESSES.BUSINESS)) {
-      return data.BUSINESSES.BUSINESS.find(
-        (element: { [key: string]: string | number }) =>
-          element.OGRN !== undefined
-      );
-    }
-    if (!Array.isArray(data.BUSINESSES.BUSINESS)) {
-      return data.BUSINESSES.BUSINESS;
-    }
-  }
-  return undefined;
+export function removeOOO(data: string) {
+  return data.split(/['"]/)[1];
 }
+
+
+// export function getBusinessInfo(data: {
+//   [key: string]: {
+//     [key: string]: Array<{ [key: string]: string }> | { [key: string]: string };
+//   };
+// }): BusinessInfoOutput  {
+//   if (data.BUSINESSES) {
+//     if (Array.isArray(data.BUSINESSES.BUSINESS)) {
+//         const ogrn = data.BUSINESSES.BUSINESS.find(
+//         (element: { [key: string]: string | number }) =>
+//           element.OGRN !== undefined
+//       );
+//       const short_name: string | undefined = data.BUSINESSES.BUSINESS.find(
+//         (element: { [key: string]: string | number }) =>
+//           element.SHORT_NAME !== undefined
+//       );
+//       return {
+//         short_name,
+//         ogrn
+
+//       }
+//     }
+//     if (!Array.isArray(data.BUSINESSES.BUSINESS)) {
+//       return data.BUSINESSES.BUSINESS;
+//     }
+//   }
+//   return undefined;
+// }
 export function getPersonName(
   data: Record<string, Record<string, { [key: string]: string }>>,
 ) {
@@ -166,24 +225,18 @@ export function getPersonName(
   return undefined;
 }
 
-export function removeOOO(data: string) {
-  return data.split(/['"]/)[1];
+
+
+
+
+export type BusinessInfoOutput = {
+  short_name: string | undefined;
+  ogrn: string |undefined;
 }
-
-
-
-
-export type BusinessInput = {
-  SHORT_NAME: string;
-  OGRN: string;
-} | null | undefined;
 
 type NameInput = string | null | undefined;
 
-type BusinessInfoResult = {
-  name: string;
-  ogrn: string;
-};
+
 
 
 export function isValidName(name: NameInput) {
@@ -193,61 +246,29 @@ export function isValidName(name: NameInput) {
 }
 
 
-export function getBusinessInfo(business: BusinessInput, name: NameInput): BusinessInfoResult {
+// export function getBusinessInfo(business: BusinessInput, name: NameInput): BusinessInfoResult {
 
-  const  hasValidBusiness = business
-    && typeof business === 'object'
-    && business?.SHORT_NAME
-    && business?.OGRN
-  // Type validation
+//   const  hasValidBusiness = business
+//     && typeof business === 'object'
+//     && business?.SHORT_NAME
+//     && business?.OGRN
+//   // Type validation
 
-  if (hasValidBusiness) {
-    return {
-      name: removeOOO(business.SHORT_NAME),
-      ogrn: business.OGRN
-    };
-  }
+//   if (hasValidBusiness) {
+//     return {
+//       name: removeOOO(business.SHORT_NAME),
+//       ogrn: business.OGRN
+//     };
+//   }
 
-  return { name: name || 'не указано', ogrn: 'не указано' };
+//   return { name: name || 'не указано', ogrn: 'не указано' };
 
-}
+// }
 
 
 
 // Helper to extract from array or object
-function extract<T>(node: unknown, key: string): T | undefined {
-  if (!node) return undefined;
-  const target = Array.isArray(node) ? node.find((item: any) => item?.[key] !== undefined) : node;
-  return target?.[key];
-}
 
-export function getOGRN(data: any): string | undefined {
-  return extract(data?.BUSINESSES?.BUSINESS, 'OGRN');
-}
-
-export function getPersonName(data: any): string | undefined {
-  const nameNode = data?.NAMES?.NAME;
-  const lastName = extract(nameNode, 'LAST_NAME');
-  return typeof lastName === 'string' ? lastName : undefined;
-}
-
-export function getShortName(data: any): string | undefined {
-  const business = data?.BUSINESSES?.BUSINESS;
-  if (!business) return undefined;
-  
-  const target = Array.isArray(business) 
-    ? business.find((item: any) => item?.SHORT_NAME !== undefined)
-    : business;
-  
-  const shortName = target?.SHORT_NAME;
-  if (!shortName) return undefined;
-  
-  if (typeof shortName === 'string') return shortName;
-  if (shortName?.value) return shortName.value;
-  if (Array.isArray(shortName)) return shortName[0]?.value || shortName[0];
-  
-  return undefined;
-}
 
 
 

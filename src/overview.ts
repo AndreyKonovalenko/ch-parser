@@ -1,12 +1,12 @@
 import { getData } from './xml-loader-from-files';
-import { getOGRN, getPersonName, removeOOO } from './service';
+import { getBusinessInfo, getPersonName, } from './service';
 import { LOAN_KEYS, LOANS_OVERVIEW } from './types';
 import 'dotenv/config';
 
 const overview = (pathToFile: string) => {
   const jsonObj = getData(pathToFile);
   const loans = jsonObj.SINGLE_FORMAT.LOANS;
-  const business = getOGRN(jsonObj.SINGLE_FORMAT);
+  const businessInfo = getBusinessInfo(jsonObj);
   const name = getPersonName(jsonObj.SINGLE_FORMAT);
   const loansOverveiew = jsonObj.SINGLE_FORMAT.LOANS_OVERVIEW;
 
@@ -23,12 +23,12 @@ const overview = (pathToFile: string) => {
   };
 
   const data = {
-    ['наименование']: business
-      ? removeOOO(business.SHORT_NAME)
+    ['наименование']: businessInfo
+      ? businessInfo.company_name_short
       : name
         ? name
         : 'не указано',
-    ['ОГРН']: business ? business.OGRN : undefined,
+    ['ОГРН']: businessInfo ? businessInfo.ogrn: 'огрн не задано',
     [LOANS_OVERVIEW.LOANS_ACTIVE]: loansOverveiew.LOANS_ACTIVE,
     [LOANS_OVERVIEW.PAY_LOAD]: loansOverveiew.PAY_LOAD,
     [LOAN_KEYS.DELQ_BALANCE]: loans ? hasCurrentPASTDUE(loans.LOAN) : 'нет ки',

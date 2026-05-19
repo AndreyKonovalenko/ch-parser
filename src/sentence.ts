@@ -1,5 +1,5 @@
 import { getData } from './xml-loader-from-files';
-import { getOGRN, getPersonName } from './service';
+import { getBusinessInfo, getPersonName } from './service';
 import { parseDate, pastdueArrearsHandler } from './service';
 import 'dotenv/config';
 import { LOAN_KEYS, STATUS, TYPE, RELATIONSHIP, LOANS_OVERVIEW } from './types';
@@ -7,7 +7,7 @@ import { LOAN_KEYS, STATUS, TYPE, RELATIONSHIP, LOANS_OVERVIEW } from './types';
 const sentence = (pathToFile: string) => {
   const jsonObj = getData(pathToFile);
   const loans = jsonObj.SINGLE_FORMAT.LOANS;
-  const business = getOGRN(jsonObj.SINGLE_FORMAT);
+  const businessInfo = getBusinessInfo(jsonObj);
   const name = getPersonName(jsonObj.SINGLE_FORMAT);
   const loansOverveiew = jsonObj.SINGLE_FORMAT.LOANS_OVERVIEW;
 
@@ -24,8 +24,8 @@ const sentence = (pathToFile: string) => {
   // };
 
   console.log(
-    business ? business.SHORT_NAME : name,
-    business ? business.OGRN : '',
+    businessInfo ? businessInfo.company_name_short : name,
+    businessInfo ? businessInfo.ogrn : '',
   );
   let sum = 0;
   for (const index in loans.LOAN) {

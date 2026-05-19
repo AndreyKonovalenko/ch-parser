@@ -1,9 +1,8 @@
 import { getData } from './xml-loader-from-files';
 import {
   pastdueArrearsHandler,
-  getOGRN,
   getPersonName,
-  removeOOO,
+  getBusinessInfo
 } from './service';
 import { saveToFile } from './xml-loader-from-files';
 import {
@@ -16,18 +15,17 @@ import {
 import { parseDate } from './service';
 import 'dotenv/config';
 import { Table } from 'console-table-printer';
-import { getBusinessInfo, BusinessInput } from './service';
+
 
 const allUUID = (withJson: boolean, pathToFile: string) => {
   const jsonObj = getData(pathToFile);
   const loans = jsonObj.SINGLE_FORMAT.LOANS;
-  const business: BusinessInput = getOGRN(jsonObj.SINGLE_FORMAT);
+  const businessInfo= getBusinessInfo(jsonObj)
   const name = getPersonName(jsonObj.SINGLE_FORMAT);
-
-
   const resultTable = new Table({
-    title: business
-      ? `${removeOOO(business.SHORT_NAME)} OGRN:${business.OGRN} `
+
+    title: businessInfo
+      ? `${businessInfo.company_name_short} OGRN:${businessInfo.ogrn} `
       : name
         ? name
         : 'не указано',
@@ -124,12 +122,12 @@ const allUUID = (withJson: boolean, pathToFile: string) => {
     }
   }
   resultTable.printTable();
-  const jsonString = JSON.stringify({leagalEntity: getBusinessInfo(business, name), arreas:reslut});
+  const jsonString = JSON.stringify(reslut);
 
   if (withJson) {
-    if (business) {
+    if (businessInfo) {
       saveToFile(
-        business.OGRN ? business.OGRN : removeOOO(business.SHORT_NAME),
+        businessInfo.ogrn ? businessInfo.ogrn : businessInfo.company_name_short,
         jsonString,
       );
     }
