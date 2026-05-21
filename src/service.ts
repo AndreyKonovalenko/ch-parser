@@ -52,6 +52,10 @@ interface IRoot {
 
 
 export function getBusinessInfo(data: IRoot) {
+  //Guard Clause
+  if(!data.SINGLE_FORMAT.BUSINESSES){
+    return undefined
+  }
    const businesses: IBusiness[] | undefined = Array.isArray(data.SINGLE_FORMAT.BUSINESSES.BUSINESS) 
   ? data.SINGLE_FORMAT.BUSINESSES.BUSINESS
   : [data.SINGLE_FORMAT.BUSINESSES.BUSINESS]
