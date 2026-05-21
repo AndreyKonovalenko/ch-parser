@@ -20,7 +20,7 @@ import { Table } from 'console-table-printer';
 const allUUID = (withJson: boolean, pathToFile: string) => {
   const jsonObj = getData(pathToFile);
   const loans = jsonObj.SINGLE_FORMAT.LOANS;
-  const businessInfo= getBusinessInfo(jsonObj)
+  const businessInfo = getBusinessInfo(jsonObj)
   const name = getPersonName(jsonObj.SINGLE_FORMAT);
   const resultTable = new Table({
 

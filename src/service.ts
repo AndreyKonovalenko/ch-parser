@@ -17,6 +17,10 @@ export function parseDate(date: string | number | undefined) {
   return `${year}-${month}-${day}`;
 }
 
+function removeCompanyPrefix(str: string) {
+  return str.replace(/^(АО|ООО|ЗАО|ПАО)\s*/, "");
+}
+
 export interface IBusiness {
   /** Primary State Registration Number (optional) */
   OGRN?: string;
@@ -51,11 +55,16 @@ export function getBusinessInfo(data: IRoot) {
    const businesses: IBusiness[] | undefined = Array.isArray(data.SINGLE_FORMAT.BUSINESSES.BUSINESS) 
   ? data.SINGLE_FORMAT.BUSINESSES.BUSINESS
   : [data.SINGLE_FORMAT.BUSINESSES.BUSINESS]
+
   if (businesses) { 
     const company_name = businesses ? businesses[0].SHORT_NAME: undefined;
-    const company_name_short = company_name? removeOOO(company_name): 'имя не задано'
-    const ogrn = businesses ? businesses[0].OGRN: 'ОГРН не задано'
-    return {company_name_short, ogrn}
+    const company_name_short = company_name ? removeCompanyPrefix(company_name): 'имя не задано'
+    // const ogrn = businesses ? businesses[0].OGRN: 'ОГРН не задано'
+    const ogrn = businesses.find(
+        (element) =>
+          element.OGRN !== undefined
+      )
+    return { company_name_short, ogrn: ogrn? ogrn.OGRN:"ОГРН не задан" }
   } 
   return undefined
 } 
@@ -176,6 +185,7 @@ export function pastdueArrearsHandler(arrears: Arrear | Array<Arrear>) {
 }
 
 export function removeOOO(data: string) {
+  console.log(data.split(/['"]/)[1])
   return data.split(/['"]/)[1];
 }
 
