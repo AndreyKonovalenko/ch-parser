@@ -18,7 +18,7 @@ export function parseDate(date: string | number | undefined) {
 }
 
 function removeCompanyPrefix(str: string) {
-  return str.replace(/^(АО|ООО|ЗАО|ПАО)\s*/, "");
+  return str.replace(/^(АО|ООО|ЗАО|ПАО|ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ|АКЦИОНЕРНОЕ ОБЩЕСТВО)\s*/, "");
 }
 
 export interface IBusiness {
